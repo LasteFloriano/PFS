@@ -1,0 +1,854 @@
+{
+  "name": "WhatsApp",
+  "nodes": [
+    {
+      "parameters": {
+        "jsCode": "const sender = $('Dados1').first().json.chatId;\nconst nome = $('Dados1').first().json.pushName;\nconst msg = $('Dados1').first().json.message;\nconst estado = $input.first().json.propertyName; // Aqui pega do nó Redis anterior\n\nlet proximaEtapa;\nlet proximaMensagem;\n\nif (!estado) {\n  proximaMensagem = `Olá, ${nome}! 😊 Tudo bem?\nSou seu assistente virtual e estou aqui para te ajudar a fazer uma reserva no restaurante temático Alternativo's 🍽️✨\n\nPara isso, só preciso que você responda 3 perguntinhas rápidas! 📝😉\n\nVamos lá! 🚀\n\n1. Para que dia você gostaria de agendar a sua reserva (dia/mês/ano)? 📆`;\n  proximaEtapa = 'aguardando_data';\n\n} else if (estado === 'aguardando_data') {\n  proximaMensagem = '2. Qual seria o horário desejado para a reserva ⏰ (HH:mm)?';\n  proximaEtapa = 'aguardando_hora';\n\n} else if (estado === 'aguardando_hora') {\n  proximaMensagem = '3. Para quantas pessoas seria a reserva 👨‍👨‍👧‍👧?';\n  proximaEtapa = 'aguardando_pessoas';\n\n} else if (estado === 'aguardando_pessoas') {\n  proximaMensagem = 'Muito obrigado pelo seu tempo! 😄 Sua reserva foi registrada com sucesso. Até breve! 🌟';\n  proximaEtapa = null;\n}\n\nreturn [{\n  json: {\n    numero: sender,\n    nome: nome,\n    mensagemCliente: msg,\n    estadoAnterior: estado,\n    proximaMensagem: proximaMensagem,\n    proximaEtapa: proximaEtapa\n  }\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        480,
+        840
+      ],
+      "id": "9505717b-d41b-4286-b7b3-a67daa56dec2",
+      "name": "Code"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "key": "=estado:{{ $json.chatId }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        360,
+        840
+      ],
+      "id": "b3f34d3c-4a54-46a3-8d54-cdf6067a1b37",
+      "name": "Redis",
+      "credentials": {
+        "redis": {
+          "id": "tlZYseXizE3802bd",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "8de13759-8270-4365-94ed-fee1d5c2fd9c",
+              "leftValue": "={{ $('Dados1').item.json.event }}",
+              "rightValue": "message",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            },
+            {
+              "id": "0d6c9e08-c000-4c9a-bb61-859364b0005e",
+              "leftValue": "={{ $('Webhook1').item.json.body.payload._data.Info.IsGroup }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "5f327c54-0f6d-4746-a720-7ab8b776f031",
+              "leftValue": "={{ $json.estadoAnterior }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        740,
+        780
+      ],
+      "id": "f0d17f96-b0f9-419c-a447-6a7158383d28",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0d6c9e08-c000-4c9a-bb61-859364b0005e",
+              "leftValue": "={{ $('Webhook1').item.json.body.payload._data.Info.IsGroup }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "false",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        600,
+        840
+      ],
+      "id": "abd316dc-0852-401e-8d5e-2248ba1e91ad",
+      "name": "If3"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        740,
+        960
+      ],
+      "id": "3c4aa585-ef94-418a-b6e7-b787ab331c5a",
+      "name": "No Operation, do nothing"
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Seen",
+        "session": "={{ $('Dados1').item.json.session }}",
+        "chatId": "={{ $('Dados1').item.json.chatId }}",
+        "messageId": "={{ $('Dados1').item.json.payloadId }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1160,
+        780
+      ],
+      "id": "18de984c-8f1d-41ae-a15a-68e8cca6e109",
+      "name": "Send Seen1",
+      "credentials": {
+        "wahaApi": {
+          "id": "tm7R57kxdg9IALBh",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "Chatting",
+        "operation": "Send Text",
+        "session": "={{ $('Dados1').item.json.session }}",
+        "chatId": "={{ $('Dados1').item.json.chatId }}",
+        "text": "={{ $('Code').item.json.proximaMensagem }}",
+        "requestOptions": {}
+      },
+      "type": "n8n-nodes-waha.WAHA",
+      "typeVersion": 202411,
+      "position": [
+        1280,
+        780
+      ],
+      "id": "b83ae280-ae35-4f9b-8010-8c09f979503c",
+      "name": "Send a text message1",
+      "credentials": {
+        "wahaApi": {
+          "id": "tm7R57kxdg9IALBh",
+          "name": "WAHA account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "set",
+        "key": "=estado:{{ $('Dados1').item.json.chatId }}",
+        "value": "={{ $('Code').item.json.proximaEtapa }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        660
+      ],
+      "id": "fefb9c7d-f73c-4d1c-a288-fac3c12ba686",
+      "name": "Redis1",
+      "credentials": {
+        "redis": {
+          "id": "tlZYseXizE3802bd",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "0e666def-be52-46b2-9751-05dce90292cd",
+              "leftValue": "={{ $('Code').item.json.proximaEtapa }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1400,
+        780
+      ],
+      "id": "ab33cd0c-c569-4c47-b75c-cfc5494fa450",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lê JSON completo do arquivo\nconst rawBase64 = $('Read1').first().binary.data.data;\nconst conteudo = Buffer.from(rawBase64, 'base64').toString('utf8');\nlet reservas = {};\ntry {\n  reservas = JSON.parse(conteudo);\n} catch (e) {\n  reservas = {};\n}\n\nconst chatId = $('Dados1').first().json.chatId;\nif (!chatId) throw new Error(\"Chat ID não encontrado.\");\n\nconst etapa = $('Code').first().json.estadoAnterior || null;\n\nlet resposta = null;\ntry {\n  resposta = $('AI Agent1').first().json.output?.trim?.() || null;\n} catch (_) {\n  resposta = null;\n}\n\n// Recupera ou cria entrada\nconst reservaAtual = reservas[chatId] || {\n  data: \"\",\n  horario: \"\",\n  pessoas: \"\"\n};\n\n// Atualiza o campo correto\nif (etapa && resposta) {\n  if (etapa === \"aguardando_data\") reservaAtual.data = resposta;\n  else if (etapa === \"aguardando_hora\") reservaAtual.horario = resposta;\n  else if (etapa === \"aguardando_pessoas\") reservaAtual.pessoas = resposta;\n}\n\nreservas[chatId] = reservaAtual;\n\nconst jsonFinal = JSON.stringify(reservas, null, 2);\n\nreturn [\n  {\n    json: {\n      debug: {\n        conteudoRecebido: conteudo,\n        reservasDepois: reservas,\n        chatId,\n        etapa,\n        resposta\n      }\n    },\n    binary: {\n      data: {\n        data: Buffer.from(jsonFinal).toString('base64')\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1840,
+        760
+      ],
+      "id": "fec4cc64-7d39-4bb4-acdb-2577e1c7a53a",
+      "name": "Code1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/dadosn8n/dados.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        760
+      ],
+      "id": "c9d0ce43-0c0e-4e46-8975-7eae2a65a8b6",
+      "name": "Read/Write Files from Disk1",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "webhook",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        120,
+        840
+      ],
+      "id": "7192632c-c58f-4c3a-8425-30af7e4baf14",
+      "name": "Webhook1",
+      "webhookId": "a7b139b1-afef-4e4a-841f-a6476887501f"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8016475-7ede-44fa-b694-6e57a3eae217",
+              "name": "session",
+              "value": "={{ $json.body.session }}",
+              "type": "string"
+            },
+            {
+              "id": "c0320a3d-6d8f-4244-8a4e-7d209c1f98c5",
+              "name": "chatId",
+              "value": "={{ $json.body.payload.from }}",
+              "type": "string"
+            },
+            {
+              "id": "0419eb1f-4894-44c3-85e4-374d3ff8c640",
+              "name": "pushName",
+              "value": "={{ $json.body.payload._data.Info.PushName }}",
+              "type": "string"
+            },
+            {
+              "id": "fd956101-0120-4e7a-b259-48edc937cd57",
+              "name": "payloadId",
+              "value": "={{ $json.body.payload.id }}",
+              "type": "string"
+            },
+            {
+              "id": "0d0783a3-360c-462d-b0f5-7ec6f44bda5e",
+              "name": "event",
+              "value": "={{ $json.body.event }}",
+              "type": "string"
+            },
+            {
+              "id": "76d9706c-48dd-4be4-8165-38c8f5aedb65",
+              "name": "message",
+              "value": "={{ $json.body.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "f429392b-123a-4431-88e8-a97d74130941",
+              "name": "fromMe",
+              "value": "={{ $json.body.payload.fromMe }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        840
+      ],
+      "id": "ec1c1852-6337-4b35-9481-f9b9f4b1b0a9",
+      "name": "Dados1"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('Code').item.json.mensagemCliente }}",
+        "options": {
+          "systemMessage": "Para data:\n\nInterprete a mensagem como uma data e converta para o formato dd/MM/yyyy. Responda apenas com a data.\n\nPara hora:\n\nInterprete a mensagem como um horário e converta para o formato HH:mm. Responda apenas com o horário.\n\nPara pessoas:\n\nInterprete a mensagem como um número de pessoas para uma reserva. Responda apenas com o número."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        880,
+        680
+      ],
+      "id": "3b610429-f1c6-4825-ac12-9318c99da49a",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0.1
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        880,
+        860
+      ],
+      "id": "496ea4c8-7f6e-47db-a643-6f22c8d767b4",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "lHqdKBXOyzaRP8AE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Dados1').item.json.chatId }}",
+        "sessionTTL": 3600,
+        "contextWindowLength": 1
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryRedisChat",
+      "typeVersion": 1.5,
+      "position": [
+        980,
+        860
+      ],
+      "id": "da02fa4a-ec5c-4161-b9c8-543ced4f2d3d",
+      "name": "Redis Chat Memory1",
+      "credentials": {
+        "redis": {
+          "id": "tlZYseXizE3802bd",
+          "name": "Redis account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://192.168.3.2:5000/reservas",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ $json }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2700,
+        700
+      ],
+      "id": "f84603f8-7947-4f7f-8a9c-d9b09f42b278",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/dadosn8n/dados.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        1700,
+        760
+      ],
+      "id": "06adf4d1-df69-47cc-8289-d50351ce2bea",
+      "name": "Read1"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "72c1d31f-e42c-4789-a769-cd7256c8ca73",
+              "leftValue": "={{ $('Code').item.json.proximaEtapa }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "empty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        2140,
+        760
+      ],
+      "id": "5c6db847-d4ec-4363-9de9-c30078652667",
+      "name": "If1"
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "/dadosn8n/dados.json",
+        "options": {
+          "append": false
+        }
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2960,
+        700
+      ],
+      "id": "853b5785-dea9-41c5-866c-e4cbd8295fa5",
+      "name": "Read/Write Files from Disk",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "jsCode": "return [{\n  binary: {\n    data: {\n      data: '' // Cria um binário vazio\n    }\n  },\n  json: {}\n}];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2820,
+        700
+      ],
+      "id": "eb37e4f2-8f53-41dd-b215-81b7454277b8",
+      "name": "Code2"
+    },
+    {
+      "parameters": {
+        "fileSelector": "/dadosn8n/dados.json",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1,
+      "position": [
+        2500,
+        700
+      ],
+      "id": "1cefc356-80d2-43a2-b941-36bff8ec1592",
+      "name": "Read"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        2360,
+        700
+      ],
+      "id": "d8859ed9-435e-4723-bcec-f1a3e70b66af",
+      "name": "Wait",
+      "webhookId": "4124db5d-60e6-4f8f-96c0-47814b9d2ac2"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Lê o arquivo binário (JSON salvo em disco)\nconst rawBase64 = $('Read').first().binary.data.data;\nconst conteudo = Buffer.from(rawBase64, 'base64').toString('utf8');\n\nlet reservas = {};\ntry {\n  reservas = JSON.parse(conteudo);\n} catch (e) {\n  reservas = {};\n}\n\n// Não atualiza nada — só monta o JSON final para enviar\nconst jsonFinal = JSON.stringify(reservas, null, 2);\n\nreturn [\n  {\n    json: reservas,  // aqui envia o objeto geral para o nó HTTP Request ou outro nó\n    binary: {\n      data: {\n        data: Buffer.from(jsonFinal).toString('base64')  // reescreve o arquivo se quiser salvar depois\n      }\n    }\n  }\n];\n"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2600,
+        840
+      ],
+      "id": "f25557ff-634b-4a13-be7f-4a00547e329d",
+      "name": "Code3"
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "key": "=estado:{{ $('Dados1').item.json.chatId }}"
+      },
+      "type": "n8n-nodes-base.redis",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        880
+      ],
+      "id": "5c081ec6-d8d8-48d4-bc46-c019eff20bc5",
+      "name": "Redis3",
+      "credentials": {
+        "redis": {
+          "id": "tlZYseXizE3802bd",
+          "name": "Redis account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Code": {
+      "main": [
+        [
+          {
+            "node": "If3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis": {
+      "main": [
+        [
+          {
+            "node": "Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send Seen1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If3": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "No Operation, do nothing",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Seen1": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a text message1": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Redis1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Redis3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code1": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook1": {
+      "main": [
+        [
+          {
+            "node": "Dados1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Dados1": {
+      "main": [
+        [
+          {
+            "node": "Redis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send Seen1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis Chat Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Redis1": {
+      "main": [
+        [
+          {
+            "node": "Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Code2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If1": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read1": {
+      "main": [
+        [
+          {
+            "node": "Code1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk1": {
+      "main": [
+        [
+          {
+            "node": "If1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code2": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read": {
+      "main": [
+        [
+          {
+            "node": "Code3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Read",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code3": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Read/Write Files from Disk": {
+      "main": [
+        []
+      ]
+    },
+    "Redis3": {
+      "main": [
+        [
+          {
+            "node": "Read1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "4cb2ed30-6ade-443e-9528-db64305dfed3",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7f1ef2af80a8c1032cc93e81802e2e8729cb5922cd1cfe944ee18373836da103"
+  },
+  "id": "WjduoUJphCTmZN2h",
+  "tags": []
+}

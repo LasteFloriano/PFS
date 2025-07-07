@@ -1,0 +1,70 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    platform: linux/amd64
+    command: redis-server --requirepass default
+    environment:
+      REDIS_USER: default
+      REDIS_PASSWORD: default
+    ports:
+      - "16379:6379"
+    networks:
+      - shared_net
+
+  postgres:
+    image: postgres:latest
+    platform: linux/amd64
+    environment:
+      POSTGRES_USER: default
+      POSTGRES_PASSWORD: default
+      POSTGRES_DB: default
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - shared_net
+
+  waha:
+    image: devlikeapro/waha:latest
+    platform: linux/amd64
+    environment:
+      # Aqui trocamos host.docker.internal pelo nome do serviço do n8n
+      WHATSAPP_HOOK_URL: http://n8n:5678/webhook-test/webhook
+      WHATSAPP_DEFAULT_ENGINE: GOWS
+      WHATSAPP_HOOK_EVENTS: message
+    volumes:
+      - waha_sessions:/app/.sessions
+      - waha_media:/app/.media
+    ports:
+      - "3000:3000"
+    networks:
+      - shared_net
+
+  n8n:
+    image: n8nio/n8n:latest
+    platform: linux/amd64
+    environment:
+      # Removemos WEBHOOK_URL e N8N_HOST que usavam host.docker.internal
+      GENERIC_TIMEZONE: America/Sao_Paulo
+      N8N_LOG_LEVEL: debug
+      N8N_COMMUNITY_PACKAGES_ALLOW_TOOL_USAGE: true
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - /mnt/e/dadosn8n:/dadosn8n
+
+    ports:
+      - "5678:5678"
+    networks:
+      - shared_net
+
+volumes:
+  pgdata:
+  waha_sessions:
+  waha_media:
+  n8n_data:
+
+networks:
+  shared_net:
