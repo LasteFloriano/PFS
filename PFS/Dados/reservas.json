@@ -1,0 +1,202 @@
+[
+  {
+    "id": 1,
+    "usuario": "Carlos Eduardo",
+    "email_cliente": "carlos.eduardo@email.com",
+    "telefone_cliente": "11988888888",
+    "data": "2025-07-05",
+    "horario": "20:00",
+    "pessoas": 4,
+    "status": "confirmado"
+  },
+  {
+    "id": 2,
+    "usuario": "Ana Julia da Silveira",
+    "email_cliente": "anajulia@gmail.com",
+    "telefone_cliente": "5199999999",
+    "data": "2025-07-06",
+    "horario": "00:00",
+    "pessoas": 1,
+    "status": "confirmado"
+  },
+  {
+    "id": 3,
+    "usuario": "Mariana Souza",
+    "email_cliente": "mariana.souza@email.com",
+    "telefone_cliente": "11977777777",
+    "data": "2025-07-12",
+    "horario": "18:45",
+    "pessoas": 2,
+    "status": "cancelado"
+  },
+  {
+    "id": 4,
+    "usuario": "Lucas Pereira",
+    "email_cliente": "lucas.pereira@email.com",
+    "telefone_cliente": "11966666666",
+    "data": "2025-07-15",
+    "horario": "19:30",
+    "pessoas": 3,
+    "status": "pendente"
+  },
+  {
+    "id": 5,
+    "usuario": "Fernanda Lima",
+    "email_cliente": "fernanda.lima@email.com",
+    "telefone_cliente": "11955555555",
+    "data": "2025-07-18",
+    "horario": "21:00",
+    "pessoas": 2,
+    "status": "confirmado"
+  },
+  {
+    "id": 6,
+    "usuario": "João Silva",
+    "email_cliente": "joao.silva@email.com",
+    "telefone_cliente": "11944444444",
+    "data": "2025-07-20",
+    "horario": "18:00",
+    "pessoas": 5,
+    "status": "confirmado"
+  },
+  {
+    "id": 7,
+    "usuario": "Patrícia Gomes",
+    "email_cliente": "patricia.gomes@email.com",
+    "telefone_cliente": "11933333333",
+    "data": "2025-07-22",
+    "horario": "20:30",
+    "pessoas": 4,
+    "status": "cancelado"
+  },
+  {
+    "id": 8,
+    "usuario": "Eduardo Santos",
+    "email_cliente": "eduardo.santos@email.com",
+    "telefone_cliente": "11922222222",
+    "data": "2025-07-25",
+    "horario": "19:00",
+    "pessoas": 2,
+    "status": "pendente"
+  },
+  {
+    "id": 9,
+    "usuario": "Isabela Fernandes",
+    "email_cliente": "isabela.fernandes@email.com",
+    "telefone_cliente": "11911111111",
+    "data": "2025-07-28",
+    "horario": "18:15",
+    "pessoas": 3,
+    "status": "confirmado"
+  },
+  {
+    "id": 10,
+    "usuario": "Marcelo Oliveira",
+    "email_cliente": "marcelo.oliveira@email.com",
+    "telefone_cliente": "11900000000",
+    "data": "2025-07-30",
+    "horario": "20:45",
+    "pessoas": 6,
+    "status": "confirmado"
+  },
+  {
+    "id": 11,
+    "usuario": "Amanda Carvalho",
+    "email_cliente": "amanda.carvalho@email.com",
+    "telefone_cliente": "11999998888",
+    "data": "2025-08-01",
+    "horario": "19:15",
+    "pessoas": 2,
+    "status": "pendente"
+  },
+  {
+    "id": 12,
+    "usuario": "Thiago Almeida",
+    "email_cliente": "thiago.almeida@email.com",
+    "telefone_cliente": "11988887777",
+    "data": "2025-08-03",
+    "horario": "18:45",
+    "pessoas": 3,
+    "status": "confirmado"
+  },
+  {
+    "id": 13,
+    "usuario": "Sofia Rodrigues",
+    "email_cliente": "sofia.rodrigues@email.com",
+    "telefone_cliente": "11977776666",
+    "data": "2025-08-05",
+    "horario": "20:00",
+    "pessoas": 4,
+    "status": "confirmado"
+  },
+  {
+    "id": 14,
+    "usuario": "Rafael Costa",
+    "email_cliente": "rafael.costa@email.com",
+    "telefone_cliente": "11966665555",
+    "data": "2025-08-07",
+    "horario": "19:30",
+    "pessoas": 5,
+    "status": "cancelado"
+  },
+  {
+    "id": 15,
+    "usuario": "Julia Martins",
+    "email_cliente": "julia.martins@email.com",
+    "telefone_cliente": "11955554444",
+    "data": "2025-08-10",
+    "horario": "21:15",
+    "pessoas": 2,
+    "status": "confirmado"
+  },
+  {
+    "id": 16,
+    "usuario": "Bruno Dias",
+    "email_cliente": "bruno.dias@email.com",
+    "telefone_cliente": "11944443333",
+    "data": "2025-08-12",
+    "horario": "18:30",
+    "pessoas": 3,
+    "status": "pendente"
+  },
+  {
+    "id": 17,
+    "usuario": "Carla Azevedo",
+    "email_cliente": "carla.azevedo@email.com",
+    "telefone_cliente": "11933332222",
+    "data": "2025-08-15",
+    "horario": "20:00",
+    "pessoas": 4,
+    "status": "confirmado"
+  },
+  {
+    "id": 18,
+    "usuario": "Felipe Barbosa",
+    "email_cliente": "felipe.barbosa@email.com",
+    "telefone_cliente": "11922221111",
+    "data": "2025-08-17",
+    "horario": "19:45",
+    "pessoas": 2,
+    "status": "cancelado"
+  },
+  {
+    "id": 19,
+    "usuario": "Patricia Ribeiro",
+    "email_cliente": "patricia.ribeiro@email.com",
+    "telefone_cliente": "11911110000",
+    "data": "2025-08-20",
+    "horario": "18:00",
+    "pessoas": 5,
+    "status": "confirmado"
+  },
+  {
+    "id": 20,
+    "usuario": "Ricardo Lima",
+    "email_cliente": "ricardo.lima@email.com",
+    "telefone_cliente": "11900009999",
+    "data": "2025-08-22",
+    "horario": "20:30",
+    "pessoas": 3,
+    "status": "pendente"
+  }
+]

@@ -1,0 +1,42 @@
+[
+    {
+        "nome": "Maria Joana",
+        "data": "01/07/2025",
+        "avaliacao_atendimento": 5,
+        "avaliacao_limpeza_conforto": 5,
+        "avaliacao_tempo_espera": 5,
+        "avaliacao_valor_qualidade": 5,
+        "pedido_atendeu_expectativas": "Sim, completamente",
+        "comentario": ""
+    },
+    {
+        "nome": "Rita",
+        "data": "03/07/2025",
+        "avaliacao_atendimento": 3,
+        "avaliacao_limpeza_conforto": 3,
+        "avaliacao_tempo_espera": 4,
+        "avaliacao_valor_qualidade": 3,
+        "pedido_atendeu_expectativas": "Parcialmente",
+        "comentario": ""
+    },
+    {
+        "nome": "Catia",
+        "data": "02/07/2025",
+        "avaliacao_atendimento": 5,
+        "avaliacao_limpeza_conforto": 5,
+        "avaliacao_tempo_espera": 5,
+        "avaliacao_valor_qualidade": 2,
+        "pedido_atendeu_expectativas": "Parcialmente",
+        "comentario": ""
+    },
+    {
+        "nome": "Lana",
+        "data": "01/07/2025",
+        "avaliacao_atendimento": 4,
+        "avaliacao_limpeza_conforto": 4,
+        "avaliacao_tempo_espera": 4,
+        "avaliacao_valor_qualidade": 4,
+        "pedido_atendeu_expectativas": "Sim, completamente",
+        "comentario": ""
+    }
+]
